@@ -38,6 +38,7 @@ file (GLOB_RECURSE DEV_SRC CONFIGURE_DEPENDS "./source/*.cpp" "./source/*.c" "./
 
 # Target
 add_library (core STATIC ${DEV_SRC})
+add_library (${DEV_INSTALL_NAME}::core ALIAS core)
 target_include_directories (core PUBLIC
 	"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${DEV_INSTALL_NAME}/include>")
