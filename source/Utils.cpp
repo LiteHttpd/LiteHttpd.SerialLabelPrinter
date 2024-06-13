@@ -13,6 +13,13 @@ namespace utils {
 		return PROJECT_VERSION_PATCH;
 	}
 
+	std::tuple<int, int, int> getDevKitVersion() {
+		return {
+			getDevKitMajorVersion(),
+			getDevKitMinorVersion(),
+			getDevKitPatchVersion() };
+	}
+
 	const std::string getDevKitVersionStr() {
 		return std::to_string(getDevKitMajorVersion()) + "."
 			+ std::to_string(getDevKitMinorVersion()) + "."

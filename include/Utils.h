@@ -7,5 +7,7 @@ namespace utils {
 	int getDevKitMinorVersion();
 	int getDevKitPatchVersion();
 
+	std::tuple<int, int, int> getDevKitVersion();
+
 	const std::string getDevKitVersionStr();
 }
