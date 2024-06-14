@@ -11,12 +11,12 @@
 #define LITEHTTPD_MODULE_DESTORY_FUNCTION_NAME "destoryModule"
 
 #define LITEHTTPD_MODULE_CREATE(className) \
-extern "C" ModuleBase* HTTPDDEV_EXPORT LITEHTTPD_MODULE_CREATE_FUNCTION() { \
+extern "C" HTTPDDEV_EXPORT ModuleBase* LITEHTTPD_MODULE_CREATE_FUNCTION() { \
 	return new className; \
 }
 
 #define LITEHTTPD_MODULE_DESTORY(className) \
-extern "C" void HTTPDDEV_EXPORT LITEHTTPD_MODULE_DESTORY_FUNCTION(ModuleBase* ptr) { \
+extern "C" HTTPDDEV_EXPORT void LITEHTTPD_MODULE_DESTORY_FUNCTION(ModuleBase* ptr) { \
 	delete ptr; \
 }
 
