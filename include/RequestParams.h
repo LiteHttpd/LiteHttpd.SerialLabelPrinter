@@ -27,8 +27,6 @@ public:
 	};
 	MethodType method = MethodType::GET;
 
-	std::string version;
-
 	std::map<std::string, std::string> headers;
 	std::vector<char> data;
 
