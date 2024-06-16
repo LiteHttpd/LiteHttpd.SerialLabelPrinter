@@ -10,10 +10,10 @@ public:
 	RequestParams() = default;
 
 public:
-	enum class ProtocalType {
+	enum class ProtocolType {
 		HTTP, HTTPS
 	};
-	ProtocalType protocol = ProtocalType::HTTP;
+	ProtocolType protocol = ProtocolType::HTTP;
 
 	std::string addr;
 	uint16_t port = 0;
