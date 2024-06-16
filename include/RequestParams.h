@@ -34,6 +34,9 @@ public:
 	uint16_t peerPort = 0;
 
 public:
+	int getResponseCode() const;
+
+public:
 	void reply(int code, const std::vector<char>& data) const;
 	void addHeader(const std::string& key, const std::string& value) const;
 
@@ -46,4 +49,6 @@ private:
 
 	ReplyFunc replyFunc;
 	AddHeaderFunc addHeaderFunc;
+
+	mutable int responseCode = 0;
 };
