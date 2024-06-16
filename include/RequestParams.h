@@ -22,7 +22,8 @@ public:
 	std::map<std::string, std::string> params;
 
 	enum class MethodType {
-		GET, HEAD, POST, PUT, DELETE_, CONNECT, OPTIONS, TRACE, PATCH
+		GET, HEAD, POST, PUT, DELETE_, CONNECT, OPTIONS, TRACE, PATCH,
+		PROPFIND, PROPPATCH, MKCOL, LOCK, UNLOCK, COPY, MOVE
 	};
 	MethodType method = MethodType::GET;
 
