@@ -10,7 +10,24 @@ void RequestParams::reply(
 	this->replyFunc(this->content, code, data);
 }
 
+void RequestParams::replyStart(int code, const std::vector<char>& data) const {
+	this->responseCode = code;
+	this->replyStartFunc(this->content, code);
+}
+
+void RequestParams::replyData(const std::vector<char>& data) const {
+	this->replyDataFunc(this->content, data);
+}
+
+void RequestParams::replyEnd() const {
+	this->replyEndFunc(this->content);
+}
+
 void RequestParams::addHeader(
 	const std::string& key, const std::string& value) const {
 	this->addHeaderFunc(this->content, key, value);
+}
+
+void RequestParams::log(LogLevel level, const std::string& data) const {
+	this->logFunc(level, data);
 }

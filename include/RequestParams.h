@@ -37,18 +37,34 @@ public:
 	int getResponseCode() const;
 
 public:
+	enum class LogLevel {
+		DEBUG, INFO, WARNING, ERROR_, CRITICAL
+	};
+
 	void reply(int code, const std::vector<char>& data) const;
+	void replyStart(int code, const std::vector<char>& data) const;
+	void replyData(const std::vector<char>& data) const;
+	void replyEnd() const;
 	void addHeader(const std::string& key, const std::string& value) const;
+	void log(LogLevel level, const std::string& data) const;
 
 private:
 	friend class RequestParamsBuilder;
 
 	void* content = nullptr;
 	using ReplyFunc = std::function<void(void*, int, const std::vector<char>&)>;
+	using ReplyStartFunc = std::function<void(void*, int)>;
+	using ReplyDataFunc = std::function<void(void*, const std::vector<char>&)>;
+	using ReplyEndFunc = std::function<void(void*)>;
 	using AddHeaderFunc = std::function<void(void*, const std::string&, const std::string&)>;
+	using LogFunc = std::function<void(LogLevel, const std::string&)>;
 
 	ReplyFunc replyFunc;
+	ReplyStartFunc replyStartFunc;
+	ReplyDataFunc replyDataFunc;
+	ReplyEndFunc replyEndFunc;
 	AddHeaderFunc addHeaderFunc;
+	LogFunc logFunc;
 
 	mutable int responseCode = 0;
 };
