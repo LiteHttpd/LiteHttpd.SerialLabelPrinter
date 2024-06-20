@@ -4,6 +4,7 @@
 #include <map>
 #include <functional>
 #include <vector>
+#include <tuple>
 
 class RequestParams final {
 public:
@@ -19,7 +20,9 @@ public:
 	uint16_t port = 0;
 
 	std::string path;
-	std::map<std::string, std::string> params;
+	std::string query;
+	using ParamList = std::map<std::string, std::string>;
+	ParamList params;
 
 	enum class MethodType {
 		GET, HEAD, POST, PUT, DELETE_, CONNECT, OPTIONS, TRACE, PATCH,
@@ -27,7 +30,7 @@ public:
 	};
 	MethodType method = MethodType::GET;
 
-	std::map<std::string, std::string> headers;
+	ParamList headers;
 	std::vector<char> data;
 
 	std::string peerAddr;
@@ -47,6 +50,9 @@ public:
 	void replyEnd() const;
 	void addHeader(const std::string& key, const std::string& value) const;
 	void log(LogLevel level, const std::string& data) const;
+	using FPMResult = std::tuple<std::vector<char>, bool>;
+	const FPMResult callFPM(const std::string& addr, uint16_t port,
+		const std::vector<char>& data, const ParamList& params = ParamList{}) const;
 
 private:
 	friend class RequestParamsBuilder;
@@ -58,6 +64,8 @@ private:
 	using ReplyEndFunc = std::function<void(void*)>;
 	using AddHeaderFunc = std::function<void(void*, const std::string&, const std::string&)>;
 	using LogFunc = std::function<void(LogLevel, const std::string&)>;
+	using FPMFunc = std::function<const FPMResult(const std::string&, uint16_t,
+		const std::vector<char>&, const ParamList&)>;
 
 	ReplyFunc replyFunc;
 	ReplyStartFunc replyStartFunc;
@@ -65,6 +73,7 @@ private:
 	ReplyEndFunc replyEndFunc;
 	AddHeaderFunc addHeaderFunc;
 	LogFunc logFunc;
+	FPMFunc fpmFunc;
 
 	mutable int responseCode = 0;
 };

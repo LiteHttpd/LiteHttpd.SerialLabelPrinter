@@ -31,3 +31,9 @@ void RequestParams::addHeader(
 void RequestParams::log(LogLevel level, const std::string& data) const {
 	this->logFunc(level, data);
 }
+
+const RequestParams::FPMResult RequestParams::callFPM(
+	const std::string& addr, uint16_t port,
+	const std::vector<char>& data, const ParamList& params) const {
+	return this->fpmFunc(addr, port, data, params);
+}
