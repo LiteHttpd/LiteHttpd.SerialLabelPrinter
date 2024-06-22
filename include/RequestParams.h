@@ -5,6 +5,7 @@
 #include <functional>
 #include <vector>
 #include <tuple>
+#include <cstdint>
 
 class RequestParams final {
 public:
