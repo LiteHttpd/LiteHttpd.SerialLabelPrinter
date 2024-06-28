@@ -34,7 +34,10 @@ include (CMakePackageConfigHelpers)
 set (DEV_INSTALL_NAME ${PROJECT_NAME})
 
 # Source
-file (GLOB_RECURSE DEV_SRC CONFIGURE_DEPENDS "./source/*.cpp" "./source/*.c" "./source/*.rc")
+file (GLOB_RECURSE DEV_SRC CONFIGURE_DEPENDS
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.c"
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.rc")
 
 # Target
 add_library (core STATIC ${DEV_SRC})
