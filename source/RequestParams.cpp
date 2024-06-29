@@ -10,7 +10,7 @@ void RequestParams::reply(
 	this->replyFunc(this->content, code, data);
 }
 
-void RequestParams::replyStart(int code, const std::vector<char>& data) const {
+void RequestParams::replyStart(int code) const {
 	this->responseCode = code;
 	this->replyStartFunc(this->content, code);
 }

@@ -46,7 +46,7 @@ public:
 	};
 
 	void reply(int code, const std::vector<char>& data) const;
-	void replyStart(int code, const std::vector<char>& data) const;
+	void replyStart(int code) const;
 	void replyData(const std::vector<char>& data) const;
 	void replyEnd() const;
 	void addHeader(const std::string& key, const std::string& value) const;
