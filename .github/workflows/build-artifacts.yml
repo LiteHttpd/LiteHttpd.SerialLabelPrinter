@@ -1,0 +1,102 @@
+name: Build Artifacts
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_call:
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+        build_type: [Debug, Release]
+        compiler: [MSVC]
+        include:
+          - os: windows-latest
+            compiler: MSVC
+            triplet: x64-windows
+
+          - os: windows-latest
+            build_type: Debug
+            compiler: MSVC
+            cmake_config: 'Ninja Debug x64'
+            build_path: 'ninja-debug-x64'
+          - os: windows-latest
+            build_type: Release
+            compiler: MSVC
+            cmake_config: 'Ninja Release x64'
+            build_path: 'ninja-release-x64'
+
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Setup Ninja
+      uses: ashutoshvarma/setup-ninja@master
+      with:
+        version: 1.11.0
+
+    - name: Install vcpkg
+      working-directory: ${{github.workspace}}/vcpkg
+      run: .\bootstrap-vcpkg.bat
+
+    - name: Initialize MSVC Environment
+      if: matrix.compiler == 'MSVC'
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{runner.arch}}
+        
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}
+      run: cmake --preset "${{matrix.cmake_config}}"
+
+    - name: Build
+      working-directory: ${{github.workspace}}
+      run: cmake --build "build/${{matrix.build_path}}" --target LiteHttpd.SerialLabelPrinter
+
+    - name: Generate Artifact Attestation
+      if: github.event_name != 'pull_request'
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: '"${{github.workspace}}/build/${{matrix.build_path}}/*.exe","${{github.workspace}}/build/${{matrix.build_path}}/*.dll"'
+        
+    - name: Get Short SHA
+      uses: benjlevesque/short-sha@v3.0
+      id: short-sha
+      with:
+        length: 7
+
+    - name: Archive Artifacts
+      if: github.event_name != 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        name: LiteHttpd.SerialLabelPrinter-${{runner.os}}-${{runner.arch}}-${{matrix.compiler}}-${{matrix.build_type}}-${{ steps.short-sha.outputs.sha }}
+        path: |
+          build/${{matrix.build_path}}/*.dll
+        compression-level: 9
+
+    - name: Archive Artifacts (Not Signed)
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        name: LiteHttpd.SerialLabelPrinter-${{runner.os}}-${{runner.arch}}-${{matrix.compiler}}-${{matrix.build_type}}-${{ steps.short-sha.outputs.sha }}-Unsafe
+        path: |
+          build/${{matrix.build_path}}/*.dll
+        compression-level: 9
