@@ -1,0 +1,96 @@
+﻿{
+  "version": 5,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 15,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "Ninja Debug x64",
+      "displayName": "Ninja Debug x64",
+      "description": "Ninja Debug x64",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-debug-x64",
+      "installDir": "${sourceDir}/install/ninja-debug-x64",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_RC_COMPILER": "rc"
+      }
+    },
+    {
+      "name": "Ninja Release x64",
+      "displayName": "Ninja Release x64",
+      "description": "Ninja Release x64",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-release-x64",
+      "installDir": "${sourceDir}/install/ninja-release-x64",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_RC_COMPILER": "rc"
+      }
+    },
+    {
+      "name": "Ninja Debug Win64 LLVM",
+      "displayName": "Ninja Debug Win64 LLVM",
+      "description": "Ninja Debug Win64 LLVM",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-debug-win64-llvm",
+      "installDir": "${sourceDir}/install/ninja-debug-win64-llvm",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_RC_COMPILER": "llvm-rc"
+      }
+    },
+    {
+      "name": "Ninja Release Win64 LLVM",
+      "displayName": "Ninja Release Win64 LLVM",
+      "description": "Ninja Release Win64 LLVM",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ninja-release-win64-llvm",
+      "installDir": "${sourceDir}/install/ninja-release-win64-llvm",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_RC_COMPILER": "llvm-rc"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Ninja Debug x64",
+      "displayName": "Ninja Debug x64",
+      "description": "Ninja Debug x64",
+      "configurePreset": "Ninja Debug x64",
+      "jobs": 16
+    },
+    {
+      "name": "Ninja Release x64",
+      "displayName": "Ninja Release x64",
+      "description": "Ninja Release x64",
+      "configurePreset": "Ninja Release x64",
+      "jobs": 16
+    },
+    {
+      "name": "Ninja Debug Win64 LLVM",
+      "displayName": "Ninja Debug Win64 LLVM",
+      "description": "Ninja Debug Win64 LLVM",
+      "configurePreset": "Ninja Debug Win64 LLVM",
+      "jobs": 16
+    },
+    {
+      "name": "Ninja Release Win64 LLVM",
+      "displayName": "Ninja Release Win64 LLVM",
+      "description": "Ninja Release Win64 LLVM",
+      "configurePreset": "Ninja Release Win64 LLVM",
+      "jobs": 16
+    }
+  ]
+}

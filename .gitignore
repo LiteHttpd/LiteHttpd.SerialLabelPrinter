@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# IDE Temp
+.vs/**
+
+# Output
+build/**
+
+# Scripts
+CopyTarget.bat
