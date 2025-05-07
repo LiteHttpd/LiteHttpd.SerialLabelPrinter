@@ -53,10 +53,6 @@ jobs:
       with:
         version: 1.11.0
 
-    - name: Install vcpkg
-      working-directory: ${{github.workspace}}/vcpkg
-      run: .\bootstrap-vcpkg.bat
-
     - name: Initialize MSVC Environment
       if: matrix.compiler == 'MSVC'
       uses: ilammy/msvc-dev-cmd@v1
