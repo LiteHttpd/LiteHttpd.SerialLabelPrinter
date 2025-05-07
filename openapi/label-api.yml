@@ -1,0 +1,162 @@
+openapi: '3.0.3'
+info:
+  title: Serial Label Printer Service
+  description:
+    Use HTTP service to drive a serial port protocol label printer.
+  version: '1.0.0'
+servers:
+  - url: http://localhost:2102
+
+components:
+  schemas:
+    device:
+      type: object
+      description: Printer device item.
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: Serial name.
+          example: 'COM3'
+        name:
+          type: string
+          description: Human readable name.
+          example: 'test'
+    serial-config:
+      type: object
+      description: Serial port configurations.
+      required:
+        - baudrate
+        - bytesize
+        - parity
+        - stopbits
+      properties:
+        baudrate:
+          type: integer
+          format: uint32
+          description: Serial port baudrates.
+          example: 9600
+        bytesize:
+          type: integer
+          format: uint8
+          description: Serial port data bit num.
+          example: 8
+        parity:
+          type: integer
+          format: uint8
+          description: 'Serial port parity. (0: NoParity, 1: OddParity, 2: EvenParity, 3: MarkParity, 4: SpaceParity)'
+          example: 0
+        stopbits:
+          type: integer
+          format: uint8
+          description: 'Serial stop bit num. (0: 1 stop bit, 1: 1.5 stop bits, 2: 2 stop bits)'
+          example: 1
+
+  responses:
+    device-list:
+      description: Available devices.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/device'
+    error:
+      description: Error message.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int16
+                description: Error code.
+                example: -1
+              message:
+                type: string
+                description: Failed reason.
+                example: Unavailable device!
+
+  parameters:
+    port:
+      name: port
+      in: query
+      required: true
+      description: The printer you wanna use.
+      schema:
+        type: string
+        description: Serial name.
+        example: 'COM3'
+
+
+tags:
+  - name: List
+  - name: Operation
+
+paths:
+  /:
+    get:
+      tags:
+        - Operation
+      description: Check service status.
+      responses:
+        '200':
+          description: Service OK.
+          content:
+            text/html:
+              example: <html><head><title>Serial Label Printer Service</title></head><body>Ready.</body></html>
+        default:
+          $ref: '#/components/responses/error'
+  /list:
+    get:
+      tags:
+        - List
+      description: Get device list.
+      responses:
+        '200':
+          $ref: '#/components/responses/device-list'
+                
+        default:
+          $ref: '#/components/responses/error'
+  /device:
+    post:
+      tags:
+        - Operation
+      description: Send commands to device.
+      parameters:
+        - $ref: '#/components/parameters/port'
+        - name: config
+          in: query
+          required: true
+          style: form
+          explode: true
+          description: The serial port configurations.
+          schema:
+            $ref: '#/components/schemas/serial-config'
+      requestBody:
+        description: Printer commands. (Base64 encoded)
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              format: byte
+              example: 'XlhBCgpeRlggVG9wIHNlY3Rpb24gd2l0aCBsb2dvLCBuYW1lIGFuZCBhZGRyZXNzLgpeQ0YwLDYwCl5GTzUwLDUwXkdCMTAwLDEwMCwxMDBeRlMKXkZPNzUsNzVeRlJeR0IxMDAsMTAwLDEwMF5GUwpeRk85Myw5M15HQjQwLDQwLDQwXkZTCl5GTzIyMCw1MF5GREludGVyc2hpcHBpbmcsIEluYy5eRlMKXkNGMCwzMApeRk8yMjAsMTE1XkZEMTAwMCBTaGlwcGluZyBMYW5lXkZTCl5GTzIyMCwxNTVeRkRTaGVsYnl2aWxsZSBUTiAzODEwMl5GUwpeRk8yMjAsMTk1XkZEVW5pdGVkIFN0YXRlcyAoVVNBKV5GUwpeRk81MCwyNTBeR0I3MDAsMywzXkZTCgpeRlggU2Vjb25kIHNlY3Rpb24gd2l0aCByZWNpcGllbnQgYWRkcmVzcyBhbmQgcGVybWl0IGluZm9ybWF0aW9uLgpeQ0ZBLDMwCl5GTzUwLDMwMF5GREpvaG4gRG9lXkZTCl5GTzUwLDM0MF5GRDEwMCBNYWluIFN0cmVldF5GUwpeRk81MCwzODBeRkRTcHJpbmdmaWVsZCBUTiAzOTAyMV5GUwpeRk81MCw0MjBeRkRVbml0ZWQgU3RhdGVzIChVU0EpXkZTCl5DRkEsMTUKXkZPNjAwLDMwMF5HQjE1MCwxNTAsM15GUwpeRk82MzgsMzQwXkZEUGVybWl0XkZTCl5GTzYzOCwzOTBeRkQxMjM0NTZeRlMKXkZPNTAsNTAwXkdCNzAwLDMsM15GUwoKXkZYIFRoaXJkIHNlY3Rpb24gd2l0aCBiYXIgY29kZS4KXkJZNSwyLDI3MApeRk8xMDAsNTUwXkJDXkZEMTIzNDU2NzheRlMKCl5GWCBGb3VydGggc2VjdGlvbiAodGhlIHR3byBib3hlcyBvbiB0aGUgYm90dG9tKS4KXkZPNTAsOTAwXkdCNzAwLDI1MCwzXkZTCl5GTzQwMCw5MDBeR0IzLDI1MCwzXkZTCl5DRjAsNDAKXkZPMTAwLDk2MF5GREN0ci4gWDM0Qi0xXkZTCl5GTzEwMCwxMDEwXkZEUkVGMSBGMDBCNDdeRlMKXkZPMTAwLDEwNjBeRkRSRUYyIEJMNEg4XkZTCl5DRjAsMTkwCl5GTzQ3MCw5NTVeRkRDQV5GUwoKXlha'
+      responses:
+        '200':
+          description: Print OK.
+        default:
+          $ref: '#/components/responses/error'
+    get:
+      tags:
+        - Operation
+      description: Check device status.
+      parameters:
+        - $ref: '#/components/parameters/port'
+      responses:
+        '200':
+          description: Device OK.
+        default:
+          $ref: '#/components/responses/error'
