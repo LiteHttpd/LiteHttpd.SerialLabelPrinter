@@ -86,6 +86,7 @@ jobs:
         name: LiteHttpd.SerialLabelPrinter-${{runner.os}}-${{runner.arch}}-${{matrix.compiler}}-${{matrix.build_type}}-${{ steps.short-sha.outputs.sha }}
         path: |
           build/${{matrix.build_path}}/*.dll
+          build/${{matrix.build_path}}/*.pdb
         compression-level: 9
 
     - name: Archive Artifacts (Not Signed)
@@ -95,4 +96,5 @@ jobs:
         name: LiteHttpd.SerialLabelPrinter-${{runner.os}}-${{runner.arch}}-${{matrix.compiler}}-${{matrix.build_type}}-${{ steps.short-sha.outputs.sha }}-Unsafe
         path: |
           build/${{matrix.build_path}}/*.dll
+          build/${{matrix.build_path}}/*.pdb
         compression-level: 9
