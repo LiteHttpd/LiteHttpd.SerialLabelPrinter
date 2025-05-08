@@ -53,7 +53,7 @@ if (NOT MSVC)
 		-pthread -fPIC)
 endif (NOT MSVC)
 if (WIN32)
-    target_link_libraries (LiteHttpd.SerialLabelPrinter PRIVATE Dbghelp)
+    target_link_libraries (LiteHttpd.SerialLabelPrinter PRIVATE Dbghelp setupapi)
 endif (WIN32)
 if (MSVC)
 	target_link_options (LiteHttpd.SerialLabelPrinter PRIVATE 
