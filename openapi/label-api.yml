@@ -16,13 +16,17 @@ components:
         - id
       properties:
         id:
-          type: string
-          description: Serial name.
-          example: 'COM3'
+          $ref: '#/components/schemas/device-port'
         name:
-          type: string
-          description: Human readable name.
-          example: 'test'
+          $ref: '#/components/schemas/device-name'
+    device-port:
+      type: string
+      description: Serial name.
+      example: 'COM3'
+    device-name:
+      type: string
+      description: Human readable name.
+      example: 'test (COM3)'
     serial-config:
       type: object
       description: Serial port configurations.
@@ -86,9 +90,7 @@ components:
       required: true
       description: The printer you wanna use.
       schema:
-        type: string
-        description: Serial name.
-        example: 'COM3'
+        $ref: '#/components/schemas/device-port'
 
 
 tags:
@@ -147,6 +149,10 @@ paths:
       responses:
         '200':
           description: Print OK.
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/device-name'
         default:
           $ref: '#/components/responses/error'
     get:
@@ -158,5 +164,9 @@ paths:
       responses:
         '200':
           description: Device OK.
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/device-name'
         default:
           $ref: '#/components/responses/error'
