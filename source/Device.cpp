@@ -65,7 +65,9 @@ const std::string Device::getResultDescription(DeviceResult result) {
 		"Serial port device not found!",
 		"Device is using!",
 		"Serial port format error!",
-		"Unknown error!"
+		"Unknown error!",
+		"Can't get serial port state!",
+		"Can't init serial port!"
 	};
 	return list[(int)result];
 }
@@ -126,6 +128,75 @@ const std::string Device::getDeviceName(const std::string& port) {
 
 	/** Not Found */
 	return {};
+}
+
+Device::DeviceResult Device::sendData(
+	const std::string& port, const Config& config,
+	const std::vector<char>& data) {
+	/** Get Full Name */
+	auto fullPortName = Device::getCOMFullName(port);
+
+	/** Open Serial */
+	HANDLE hSerial = CreateFileA(
+		fullPortName.c_str(),
+		GENERIC_WRITE,
+		0,
+		nullptr,
+		OPEN_EXISTING,
+		0,
+		nullptr
+	);
+
+	/** Check Error */
+	if (hSerial == INVALID_HANDLE_VALUE) {
+		DWORD err = GetLastError();
+		switch (err)
+		{
+		case ERROR_ACCESS_DENIED:
+			/** Not Available */
+			return DeviceResult::NotAvailable;
+		case ERROR_FILE_NOT_FOUND:
+			/** Not Found */
+			return DeviceResult::NotFound;
+		case ERROR_INVALID_HANDLE:
+			/** Bad */
+			return DeviceResult::BadPort;
+		default:
+			/** Unknown Error */
+			return DeviceResult::UnknownError;
+		}
+	}
+
+	/** Init DCB */
+	DCB dcbSerialParams = { 0 };
+	dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
+
+	/** Get Serial State */
+	if (!GetCommState(hSerial, &dcbSerialParams)) {
+		CloseHandle(hSerial);
+		return DeviceResult::GetStateError;
+	}
+
+	/** Init Serial */
+	dcbSerialParams.BaudRate = config.baudRate;
+	dcbSerialParams.ByteSize = config.byteSize;
+	dcbSerialParams.Parity = config.parity;
+	dcbSerialParams.StopBits = config.stopBits;
+
+	if (!SetCommState(hSerial, &dcbSerialParams)) {
+		CloseHandle(hSerial);
+		return DeviceResult::InitError;
+	}
+
+	/** Send Data */
+	DWORD bytesWritten;
+	WriteFile(hSerial, data.data(), data.size(), &bytesWritten, nullptr);
+
+	/** Close Serial */
+	CloseHandle(hSerial);
+
+	/** OK */
+	return DeviceResult::OK;
 }
 
 const std::string Device::getCOMPort(const std::string& friendlyName) {
